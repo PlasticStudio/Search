@@ -1,12 +1,12 @@
----
-Name: search
-Before:
-    - '#site'
----
-SilverStripe\Control\Controller:
-  extensions:
-    - Jaedb\Search\SearchControllerExtension
-Jaedb\Search\SearchPageController:
+# ---
+# Name: search
+# Before:
+#     - '#site'
+# ---
+# SilverStripe\Control\Controller:
+#   extensions:
+#     - Jaedb\Search\SearchControllerExtension
+# Jaedb\Search\SearchPageController:
   # types:
   #   docs:
   #     Label: 'Documents'
