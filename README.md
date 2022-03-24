@@ -21,7 +21,7 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 * On page or Element save, all content from all Elements is saved to a field called `ElementalSearchContent` on sitetree.
 * Simply include `'SiteTree_Live.ElementalSearchContent'` to the list of page columns
 * Currently there is no way to exclude individual elements from being included.
-* Run IndexPageContentForSearchTask to index element content
+* Run IndexPageContentForSearchTask to index element content (cli: php vendor/silverstripe/framework/cli-script.php dev/tasks/PlasticStudio-Search-IndexPageContentForSearchTask reindex=true limit=20 offset=10)
 
 
 # Configuration
