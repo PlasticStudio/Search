@@ -28,7 +28,6 @@ class ElementalSearchExtension extends Extension
     }
     /**
      * Force a re-index of the parent page on un-publish of element
-     * @param Versioned $original
      */
     public function onAfterUnpublish()
     {
