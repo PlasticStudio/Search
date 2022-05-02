@@ -38,9 +38,9 @@ class ElementalSearchExtension extends Extension
     {
         $parent = $this->getOwner()->getPage();
         //Even though we have the parent page. Lets always get the "live" version. This is so when we update the search content we are not indexing draft/unpublished content
-        $liveParentPage = Versioned::get_by_stage($parentPage->ClassName, Versioned::LIVE)->byID($parentPage->ID);
-        if ($parent && $parent->hasExtension(SiteTreeSearchExtension::class)) {
-            $parent->updateSearchContent();
+        $liveParentPage = Versioned::get_by_stage($parent->ClassName, Versioned::LIVE)->byID($parent->ID);
+        if ($liveParentPage && $liveParentPage->hasExtension(SiteTreeSearchExtension::class)) {
+            $liveParentPage->updateSearchContent();
         }
     }
 }
