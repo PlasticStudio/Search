@@ -23,7 +23,7 @@ class SiteTreeSearchExtension extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
-        // $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
+        $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
     }
 
     /**
