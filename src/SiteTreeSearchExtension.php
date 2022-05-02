@@ -26,15 +26,6 @@ class SiteTreeSearchExtension extends DataExtension
         // $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
     }
 
-    public function onBeforeWrite()
-    {
-        
-        parent::onBeforeWrite();
-
-        //generate search content from elements and save to our search field
-        $this->collateSearchContent();
-    }
-
     /**
      * Trigger page writes so that we trigger the onBefore write
      */
@@ -52,7 +43,13 @@ class SiteTreeSearchExtension extends DataExtension
 
         if($this->owner->isInDB() && $this->owner->isPublished()){
 
-            $this->owner->copyVersionToStage(Versioned::DRAFT, Versioned::LIVE, true);
+            $update = SQLUpdate::create();
+            $update->setTable('"SiteTree_Live"');
+            $update->addWhere(['ID' => $this->owner->ID]);
+            $update->addAssignments([
+                '"ElementalSearchContent"' => $content
+            ]);
+            $update->execute();    
 
         }
     }
