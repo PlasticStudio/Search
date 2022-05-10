@@ -23,14 +23,14 @@ class SiteTreeSearchExtension extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
+        // $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
     }
 
     /**
      * Trigger page writes so that we trigger the onBefore write
      */
-    public function updateSearchContent(){
-
+    public function updateSearchContent()
+    {
         $content = $this->collateSearchContent();
 
         $update = SQLUpdate::create();
@@ -41,16 +41,14 @@ class SiteTreeSearchExtension extends DataExtension
         ]);
         $update->execute();
 
-        if($this->owner->isInDB() && $this->owner->isPublished()){
-
+        if ($this->owner->isInDB() && $this->owner->isPublished()) {
             $update = SQLUpdate::create();
             $update->setTable('"SiteTree_Live"');
             $update->addWhere(['ID' => $this->owner->ID]);
             $update->addAssignments([
                 '"ElementalSearchContent"' => $content
             ]);
-            $update->execute();    
-
+            $update->execute();
         }
     }
 
@@ -116,6 +114,4 @@ class SiteTreeSearchExtension extends DataExtension
 
         return $content;
     }
-
-
 }
