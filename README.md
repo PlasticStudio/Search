@@ -82,12 +82,12 @@ PlasticStudio\Search\SearchPageController:
 
       # Another possible syntax (same result like above):
       # JoinTables:
-      #   - "SiteTreeLive.ID": "Page.ID"
+      #   - "SiteTree_Live.ID": "Page.ID"
 
       # Another possible syntax (same result like above):
       # JoinTables:
-      #   - "SiteTreeLive":
-      #     - "SiteTreeLive.ID": "Page.ID"
+      #   - "SiteTree_Live":
+      #     - "SiteTree_Live.ID": "Page.ID"
       
       Columns: ['SiteTree_Live.Title','SiteTree_Live.MenuTitle','SiteTree_Live.Content', 'SiteTree_Live.ElementalSearchContent']
   filters:
