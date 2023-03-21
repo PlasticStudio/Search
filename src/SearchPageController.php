@@ -300,8 +300,71 @@ class SearchPageController extends PageController {
 			// Join this type with any dependent tables (if applicable)
 			if (isset($type['JoinTables'])){
 				foreach ($type['JoinTables'] as $joinTable){
-					$joins.= "LEFT JOIN \"".$joinTable."\" ON \"".$joinTable."\".\"ID\" = \"".$type['Table']."\".\"ID\" ";		
-				}
+                    /**
+                     * Valid yaml values: SiteTree, SiteTree.ID
+                     * SQL: LEFT JOIN SiteTree ON SiteTree.ID = Table.ID
+                     */
+                    if (is_string(($joinTable))) {
+                        $joinTableField = 'ID';
+
+                        if (substr_count($joinTable, '.') > 0) {
+                            [$joinTable, $joinTableField] = explode('.', $joinTable);
+                        }
+
+                        $joins.= "LEFT JOIN \"".$joinTable."\" ON \"".$joinTable."\".\"".$joinTableField."\" = \"".$type['Table']."\".\"ID\" ";
+
+                        continue;
+                    }
+
+                    /**
+                     * Valid yaml value: - "SiteTree.ID": "Page.ID"
+                     * SQL: LEFT JOIN SiteTree ON SiteTree.ID = Page.ID
+                     */
+                    if (is_array($joinTable) && is_string(reset($joinTable))) {
+                        $joinTableTo = reset($joinTable);
+                        $joinTableToField = 'ID';
+                        $joinTable = array_key_first($joinTable);
+                        $joinTableField = 'ID';
+
+                        if (substr_count($joinTable, '.') > 0) {
+                            [$joinTable, $joinTableField] = explode('.', $joinTable);
+                        }
+
+                        if (substr_count($joinTableTo, '.') > 0) {
+                            [$joinTableTo, $joinTableToField] = explode('.', $joinTableTo);
+                        }
+
+                        $joins.= "LEFT JOIN \"".$joinTable."\" ON \"".$joinTable."\".\"".$joinTableField."\" = \"".$joinTableTo."\".\"".$joinTableToField."\" ";
+
+                        continue;
+                    }
+
+                    /**
+                     * Valid yaml value: - "SiteTree":
+                     *                        - "SiteTree.ID": "Page.ID"
+                     * SQL: LEFT JOIN SiteTree ON SiteTree.ID = Page.ID
+                     */
+                    if (is_array($joinTable) && is_array(reset($joinTable))) {
+                        $joinTableFrom = array_key_first(reset($joinTable));
+                        $joinTableFromField = 'ID';
+                        $joinTableTo = reset($joinTable);
+                        $joinTableTo = reset($joinTableTo);
+                        $joinTableToField = 'ID';
+                        $joinTable = array_key_first($joinTable);
+
+                        if (substr_count($joinTableFrom, '.') > 0) {
+                            [$joinTableFrom, $joinTableFromField] = explode('.', $joinTableFrom);
+                        }
+
+                        if (substr_count($joinTableTo, '.') > 0) {
+                            [$joinTableTo, $joinTableToField] = explode('.', $joinTableTo);
+                        }
+
+                        $joins.= "LEFT JOIN \"".$joinTable."\" ON \"".$joinTableFrom."\".\"".$joinTableFromField."\" = \"".$joinTableTo."\".\"".$joinTableToField."\" ";
+
+                        continue;
+                    }
+                }
 			}
 			
 			/**
