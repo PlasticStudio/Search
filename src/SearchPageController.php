@@ -19,26 +19,26 @@ class SearchPageController extends PageController {
 	private static $sort;
 	private static $defaults;
 	private static $results;
-    private static $include_css = true;
-    private static $include_js = true;
+	private static $include_css = true;
+	private static $include_js = true;
 	
 	public function index($request){
 		
-        if ($this->config()->get('include_css')) {
-            if (Director::isLive()){
-                Requirements::css('plasticstudio/search:client/Search.min.css');
-            } else {
-                Requirements::css('plasticstudio/search:client/Search.css');
-            }
-        }
+		if ($this->config()->get('include_css')) {
+			if (Director::isLive()){
+				Requirements::css('plasticstudio/search:client/Search.min.css');
+			} else {
+				Requirements::css('plasticstudio/search:client/Search.css');
+			}
+		}
 
-        if ($this->config()->get('include_js')) {
-            if (Director::isLive()){
-                Requirements::javascript('plasticstudio/search:client/Search.min.js');
-            } else {
-                Requirements::javascript('plasticstudio/search:client/Search.js');
-            }
-        }
+		if ($this->config()->get('include_js')) {
+			if (Director::isLive()){
+				Requirements::javascript('plasticstudio/search:client/Search.min.js');
+			} else {
+				Requirements::javascript('plasticstudio/search:client/Search.js');
+			}
+		}
 		
 		// get the parameters and variables of this request (ie the query and filters)
 		$vars = $request->requestVars();
