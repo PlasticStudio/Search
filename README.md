@@ -30,7 +30,7 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
   * `Table`: the object's primary table (note `_Live` suffix for versioned objects)
   * `ClassName`: full ClassName
   * `ClassNameShort`: namespaced ClassName
-  * `Filters`: a list of filters to apply pre-search (maps to `DataList->Filter(key => value)`)
+  * `Filters`: a list of filters to apply pre-search (maps to `DataList->Filter(key => value|value[])`)
   * `Columns`: columns to search for query string matches (format `Table.Column`)
 * `filters`: associative list of filter options
   * `Structure`: defines the filter's relational structure (must be one of `db`, `has_one` or `many_many`)
@@ -51,7 +51,7 @@ TODO: `defaults`: Default attributes or settings, as opposed to those submitted 
 
 # Example configuration
 
-```
+```yml
 ---
 Name: search
 Before:
@@ -67,6 +67,8 @@ PlasticStudio\Search\SearchPageController:
       Filters:
         File_Live.ShowInSearch: '1'
         File_Live.ClassName:  '''Silverstripe\\Assets\\File''' # You need to TRIPLE-ESCAPE in order to pass this as a string to the query
+        # For images too..
+        # File_Live.ClassName:  ['''Silverstripe\\Assets\\File''', '''Silverstripe\\Assets\\Image''']
       Columns: ['File_Live.Title','File_Live.Description','File_Live.Name']
     pages:
       Label: 'Pages'
