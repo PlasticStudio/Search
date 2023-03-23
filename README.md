@@ -67,9 +67,6 @@ PlasticStudio\Search\SearchPageController:
       Filters:
         File_Live.ShowInSearch: '1'
         File_Live.ClassName:  '''Silverstripe\\Assets\\File''' # You need to TRIPLE-ESCAPE in order to pass this as a string to the query
-
-        # You can set an array as values: (does the same like above)
-        # File_Live.ClassName:  ['''Silverstripe\\Assets\\File''']
         
         # Or for most flexibility: (does the same like above)
         # File_Live.ClassName:
