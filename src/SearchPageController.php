@@ -272,6 +272,22 @@ class SearchPageController extends PageController {
 	 * Have a squiz through our site and find all matches
 	 * @return PaginatedList
 	 **/
+	/*
+		SELECT Programme_Live.Name AS "Name", Programme_Live.ElementalSearchContent AS "Content",
+		(CASE 
+		WHEN Programme_Live.Name LIKE '%New Zealand Diploma%' THEN 1 
+		WHEN Programme_Live.ElementalSearchContent LIKE CONCAT('%','enrolment','%') THEN 2
+		ELSE 3
+		END) AS Priority
+		FROM Programme_Live  WHERE 
+		(Programme_Live.Name LIKE CONCAT('%','enrolment','%') 
+		OR Programme_Live.NiceName LIKE CONCAT('%','enrolment','%') 
+		OR Programme_Live.Blurb LIKE CONCAT('%','enrolment','%') 
+		OR Programme_Live.ElementalSearchContent LIKE CONCAT('%','enrolment','%')
+		) 
+		AND (Programme_Live.HideInSearch = 0)  
+		ORDER BY `Priority` ASC
+	*/
 	public function PerformSearch(){
 		
 		// get all our search requirements
@@ -279,8 +295,8 @@ class SearchPageController extends PageController {
 		$types = self::get_mapped_types();
 		$filters = self::get_mapped_filters();
 		
-		// prepare our final result object
-		$allResults = ArrayList::create();
+		// prepare combined result object
+		$allResults = array();
 		
 		// loop all the records we need to lookup
 		foreach ($types as $type){
@@ -295,18 +311,37 @@ class SearchPageController extends PageController {
 			 * We only need ClassName and ID to fetch the full object (using the SilverStripe ORM)
 			 * once we've got our results
 			 **/
-			$sql.= "SELECT \"".$type['Table']."\".\"ID\" AS \"ResultObject_ID\" FROM \"".$type['Table']."\" ";
+			$sql.= "SELECT \"".$type['Table']."\".\"ID\" AS \"ResultObject_ID\", ";
+
+			// add columns to select so can add priority
+			foreach ($type['Columns'] as $i => $column){
+				$column = explode('.', $column);
+				$sql.= "$column[0].$column[1], ";
+			}
+
+			// add priority as per order of columns
+			$priority = 1;
+			$sql.= "CASE ";
+			foreach ($type['Columns'] as $i => $column){
+				$column = explode('.',$column);
+				$sql.= "WHEN $column[0].$column[1] LIKE '%".$query."%'" . " THEN $priority ";
+				$priority++;
+			}
+			$sql.= "ELSE $priority END AS Priority ";
+
+			$sql.="FROM \"".$type['Table']."\" ";
 			
 			// Join this type with any dependent tables (if applicable)
 			if (isset($type['JoinTables'])){
 				foreach ($type['JoinTables'] as $joinTable){
 					$joins.= "LEFT JOIN \"".$joinTable."\" ON \"".$joinTable."\".\"ID\" = \"".$type['Table']."\".\"ID\" ";		
 				}
-			}
+			}		
 			
 			/**
 			 * Query term
 			 * We search each column for this type for the provided query string
+
 			 */
 			$where .= ' WHERE (';
 			foreach ($type['Columns'] as $i => $column){
@@ -486,35 +521,51 @@ class SearchPageController extends PageController {
 				if ($relations_sql !== ''){
 					$where.= ' AND ('.$relations_sql.')';
 				}
-			}
-			
+			}			
 			
 			// Compile our sql string
 			$sql.= $joins;
 			$sql.= $where;
 
-			// Debugging
-			//echo '<h3 style="position: relative; padding: 20px; background: #EEEEEE; z-index: 999;">'.str_replace('"', '`', $sql).'</h3>';
+			// Apply sorting by priority from CASE statement
+			$sql.=" ORDER BY Priority";
 
-			// Eexecutioner enter stage left
+			// Debugging
+			// echo '<h3 style="position: relative; padding: 20px; background: #EEEEEE; z-index: 999;">'.str_replace('"', '`', $sql).'</h3>';
+
+			// Executioner enter stage left
 			$results = DB::query($sql);
-			$resultIDs = array();
 
 			// Add all the result ids to our array
 			foreach ($results as $result){
 
-				// Make sure we're not already a result
-				if (!isset($resultIDs[$result['ResultObject_ID']])){
-					$resultIDs[$result['ResultObject_ID']] = $result['ResultObject_ID'];
-				}
+				// add to array list
+				$allResults[] = [
+					'id' => $result['ResultObject_ID'],
+					'priority' => $result['Priority'],
+					'class' => $type['ClassName'],
+				];
 			}
-			
-			// Convert our SQL results into SilverStripe objects of the appropriate class
-			if ($resultIDs){
-				$resultObjects = $type['ClassName']::get()->filter(['ID' => $resultIDs]);
-				$allResults->merge($resultObjects);
+		}		
+
+		// Sort all results by priority
+		array_multisort(array_column($allResults, 'priority'), SORT_ASC, $allResults);
+		
+		$orderedResults = ArrayList::create();
+
+		// filter by permission
+		if($allResults) foreach($allResults as $result) {
+
+			$resultObject = $result['class']::get()->byID($result['id']);
+
+			// check permissions
+			if($resultObject->canView()) {
+				$orderedResults->push($resultObject);
 			}
 		}
+
+		// Remove duplicates
+		$orderedResults->removeDuplicates('ID');
 
 		$sort = false;
 		// Sorting applied throug form submission
@@ -528,20 +579,13 @@ class SearchPageController extends PageController {
 		elseif(isset(self::get_mapped_defaults()['sort'])){
 			$sort = self::get_mapped_defaults()['sort'];
 		}
-		if($sort){
-			$allResults = $allResults->Sort($sort);
-		}
 
-		// Remove duplicates
-		$allResults->removeDuplicates('ID');
-
-		// filter by permission
-		if($allResults) foreach($allResults as $result) {
-			if(!$result->canView()) $allResults->remove($result);
-		}
+		if($sort != 'NULL' && $sort != false){
+			$orderedResults = $orderedResults->Sort($sort);
+		}		
 		
 		// load into a paginated list. To change the items per page, set via the template (ie Results.setPageLength(20))
-		$paginatedItems = PaginatedList::create($allResults, $this->request);
+		$paginatedItems = PaginatedList::create($orderedResults, $this->request);
 		
 		return $paginatedItems;
 	}
