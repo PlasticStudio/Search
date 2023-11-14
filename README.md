@@ -48,6 +48,8 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 
 TODO: `defaults`: Default attributes or settings, as opposed to those submitted through the search form.
 
+#### Priority
+To take advantage of priority ordering based on the location of the keyword in the results object, order the columns array to match your priority eg 1st column = priority 1 etc.
 
 # Example configuration
 
