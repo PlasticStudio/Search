@@ -297,6 +297,9 @@ class SearchPageController extends PageController {
 		
 		// prepare combined result object
 		$allResults = array();
+
+		// keep track of the order of types for sorting
+		$type_order = 0;
 		
 		// loop all the records we need to lookup
 		foreach ($types as $type){
@@ -544,12 +547,16 @@ class SearchPageController extends PageController {
 					'id' => $result['ResultObject_ID'],
 					'priority' => $result['Priority'],
 					'class' => $type['ClassName'],
+					'type' => $type_order,
 				];
 			}
+
+			$type_order++;
+
 		}		
 
-		// Sort all results by priority
-		array_multisort(array_column($allResults, 'priority'), SORT_ASC, $allResults);
+		// Sort all results by priority, and keep type order
+		array_multisort(array_column($allResults, 'priority'), SORT_ASC, array_column($allResults, 'type'), SORT_ASC, $allResults);
 		
 		$orderedResults = ArrayList::create();
 
