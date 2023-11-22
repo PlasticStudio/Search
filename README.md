@@ -66,6 +66,7 @@ sorts:
       Label: 'None' (or 'Priority')
       Sort: 'NULL'
 ```
+
 # Example configuration
 
 ```
