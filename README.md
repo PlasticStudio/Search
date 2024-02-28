@@ -49,7 +49,9 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 TODO: `defaults`: Default attributes or settings, as opposed to those submitted through the search form.
 
 #### Priority
-To take advantage of priority ordering based on the location of the keyword in the results object, order the types and columns array to match your priority.
+To take advantage of priority ordering based on the location of the keyword in the results object:
+- add 'priority: true' to your search.yml settings
+- order the types and columns array to match your priority
 Eg:
 ```
 types:
@@ -59,12 +61,16 @@ types:
     Columns: title (priority 1), meta title (priority 2), content (priority 3)
 ```
 - Results with keyword in article title will display before keywords in page title based on order of priority and types.
-- Ensure you add a null default sort value 
+- Ensure you add a null default sort value
 ```
 sorts:
     none:
       Label: 'None' (or 'Priority')
       Sort: 'NULL'
+```
+- enable priority
+```
+priority: true
 ```
 
 # Example configuration
