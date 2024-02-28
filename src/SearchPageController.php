@@ -579,12 +579,12 @@ class SearchPageController extends PageController {
 		$orderedResults = ArrayList::create();
 
 		// filter by permission
-		if($allResults) foreach($allResults as $result) {
+		if ($allResults) foreach($allResults as $result) {
 
 			$resultObject = $result['class']::get()->byID($result['id']);
 
 			// check permissions
-			if($resultObject->canView()) {
+			if ($resultObject && $resultObject->canView()) {
 				$orderedResults->push($resultObject);
 			}
 		}
