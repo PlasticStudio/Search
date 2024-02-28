@@ -16,7 +16,6 @@ class SearchPageController extends PageController {
 	private static $query;
 	private static $types;
 	private static $filters;
-	private static $enablePriority;
 	private static $sort;
 	private static $defaults;
 	private static $results;
@@ -177,8 +176,11 @@ class SearchPageController extends PageController {
 	}
 	
 	public static function get_priority_enabled(){
-		$priority = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'priority');
-		self::$enablePriority = $priority;
+		if ($priority = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'priority')) {
+			return $priority;
+		} else {
+			return false;
+		}
 	}
 
 	public static function get_sort(){
@@ -320,15 +322,17 @@ class SearchPageController extends PageController {
 			 * We only need ClassName and ID to fetch the full object (using the SilverStripe ORM)
 			 * once we've got our results
 			 **/
-			$sql.= "SELECT \"".$type['Table']."\".\"ID\" AS \"ResultObject_ID\", ";
+			
+			if ($priority) {
+				$sql.= "SELECT \"".$type['Table']."\".\"ID\" AS \"ResultObject_ID\", ";
 
-			// add columns to select so can add priority
-			foreach ($type['Columns'] as $i => $column){
-				$column = explode('.', $column);
-				$sql.= "$column[0].$column[1], ";
-			}
+				// add columns to select so can add priority
+				foreach ($type['Columns'] as $i => $column){
+					$column = explode('.', $column);
+					$sql.= "$column[0].$column[1], ";
+				}
 
-			if($priority) {
+
 				// add priority as per order of columns
 				$priority = 1;
 				$sql.= "CASE ";
@@ -338,9 +342,13 @@ class SearchPageController extends PageController {
 					$priority++;
 				}
 				$sql.= "ELSE $priority END AS Priority ";
-			}
 
-			$sql.="FROM \"".$type['Table']."\" ";
+				$sql.="FROM \"".$type['Table']."\" ";
+
+			} else {
+
+				$sql.= "SELECT \"".$type['Table']."\".\"ID\" AS \"ResultObject_ID\" FROM \"".$type['Table']."\" ";
+			}
 			
 			// Join this type with any dependent tables (if applicable)
 			if (isset($type['JoinTables'])){
@@ -555,7 +563,7 @@ class SearchPageController extends PageController {
 				// add to array list
 				$allResults[] = [
 					'id' => $result['ResultObject_ID'],
-					'priority' => $result['Priority'],
+					'priority' => isset($result['Priority']) ? $result['Priority'] : 1,
 					'class' => $type['ClassName'],
 					'type' => $type_order,
 				];
