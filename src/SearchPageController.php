@@ -16,6 +16,7 @@ class SearchPageController extends PageController {
 	private static $query;
 	private static $types;
 	private static $filters;
+	private static $enablePriority;
 	private static $sort;
 	private static $defaults;
 	private static $results;
@@ -175,6 +176,11 @@ class SearchPageController extends PageController {
 		self::$query = $query;
 	}
 	
+	public static function get_priority_enabled(){
+		$priority = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'priority');
+		self::$enablePriority = $priority;
+	}
+
 	public static function get_sort(){
 		return self::$sort;
 	}
@@ -223,7 +229,6 @@ class SearchPageController extends PageController {
 	public function Query(){
 		return self::get_query();
 	}
-	
 	
 	/**
 	 * Get the results
@@ -294,6 +299,7 @@ class SearchPageController extends PageController {
 		$query = self::get_query($mysqlSafe = true);
 		$types = self::get_mapped_types();
 		$filters = self::get_mapped_filters();
+		$priority = self::get_priority_enabled();
 		
 		// prepare combined result object
 		$allResults = array();
@@ -322,15 +328,17 @@ class SearchPageController extends PageController {
 				$sql.= "$column[0].$column[1], ";
 			}
 
-			// add priority as per order of columns
-			$priority = 1;
-			$sql.= "CASE ";
-			foreach ($type['Columns'] as $i => $column){
-				$column = explode('.',$column);
-				$sql.= "WHEN $column[0].$column[1] LIKE '%".$query."%'" . " THEN $priority ";
-				$priority++;
+			if($priority) {
+				// add priority as per order of columns
+				$priority = 1;
+				$sql.= "CASE ";
+				foreach ($type['Columns'] as $i => $column){
+					$column = explode('.',$column);
+					$sql.= "WHEN $column[0].$column[1] LIKE '%".$query."%'" . " THEN $priority ";
+					$priority++;
+				}
+				$sql.= "ELSE $priority END AS Priority ";
 			}
-			$sql.= "ELSE $priority END AS Priority ";
 
 			$sql.="FROM \"".$type['Table']."\" ";
 			
@@ -530,9 +538,11 @@ class SearchPageController extends PageController {
 			$sql.= $joins;
 			$sql.= $where;
 
-			// Apply sorting by priority from CASE statement
-			$sql.=" ORDER BY Priority";
-
+			if ($priority) {
+				// Apply sorting by priority from CASE statement
+				$sql.=" ORDER BY Priority";
+			}
+			
 			// Debugging
 			// echo '<h3 style="position: relative; padding: 20px; background: #EEEEEE; z-index: 999;">'.str_replace('"', '`', $sql).'</h3>';
 
