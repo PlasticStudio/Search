@@ -60,12 +60,12 @@ types:
     Columns: title (priority 1), meta title (priority 2), content (priority 3)
 ```
 - Results with keyword in article title will display before keywords in page title based on order of priority and types.
-- Ensure you add a null default sort value
+- Ensure you add a null default sort value, this will be priority
 ```
 sorts:
     none:
-      Label: 'None' (or 'Priority')
-      Sort: 'NULL'
+      Label: "None"
+      Sort: "NULL"
 ```
 - enable priority
 ```
@@ -139,10 +139,10 @@ PlasticStudio\Search\SearchPageController:
     title_desc:
       Label: 'Title (Z-A)'
       Sort: 'Title DESC'
-    published_asc:
+    published_desc:
       Label: 'Publish date (newest first)'
       Sort: 'DatePublished DESC'
-    published_desc:
+    published_asc:
       Label: 'Publish date (oldest first)'
       Sort: 'DatePublished ASC'
   submit_button_text: 'Go'
