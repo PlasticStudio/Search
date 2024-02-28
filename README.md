@@ -48,9 +48,8 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 
 TODO: `defaults`: Default attributes or settings, as opposed to those submitted through the search form.
 
-#### Priority
+### Priority
 To take advantage of priority ordering based on the location of the keyword in the results object:
-- add 'priority: true' to your search.yml settings
 - order the types and columns array to match your priority
 Eg:
 ```
@@ -147,6 +146,7 @@ PlasticStudio\Search\SearchPageController:
       Label: 'Publish date (oldest first)'
       Sort: 'DatePublished ASC'
   submit_button_text: 'Go'
+  priority: false
   ## TODO:
   ## defaults:
     ## sort: 'Title ASC'
