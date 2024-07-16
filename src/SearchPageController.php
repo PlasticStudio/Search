@@ -566,7 +566,7 @@ class SearchPageController extends PageController {
 					'priority' => isset($result['Priority']) ? $result['Priority'] : 1,
 					'class' => $type['ClassName'],
 					'type' => $type_order,
-					'lastEdited' => $result['LastEdited'],
+					'lastEdited' => isset($result['LastEdited']) ? $result['LastEdited'] : 0,
 				];
 			}
 
