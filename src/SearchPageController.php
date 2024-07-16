@@ -566,6 +566,7 @@ class SearchPageController extends PageController {
 					'priority' => isset($result['Priority']) ? $result['Priority'] : 1,
 					'class' => $type['ClassName'],
 					'type' => $type_order,
+					'lastEdited' => $result['LastEdited'],
 				];
 			}
 
@@ -574,7 +575,12 @@ class SearchPageController extends PageController {
 		}		
 
 		// Sort all results by priority, and keep type order
-		array_multisort(array_column($allResults, 'priority'), SORT_ASC, array_column($allResults, 'type'), SORT_ASC, $allResults);
+		array_multisort(
+			array_column($allResults, 'priority'), SORT_ASC,
+			array_column($allResults, 'type'), SORT_ASC,
+			array_column($allResults, 'lastEdited'), SORT_DESC,
+			$allResults
+		);
 		
 		$orderedResults = ArrayList::create();
 
