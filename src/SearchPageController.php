@@ -192,7 +192,7 @@ class SearchPageController extends PageController {
             return 'LastEdited';
         }
     }
-	
+
 	public static function get_sort(){
 		return self::$sort;
 	}
@@ -603,6 +603,13 @@ class SearchPageController extends PageController {
 			// check permissions
 			if ($resultObject && $resultObject->canView()) {
 				$orderedResults->push($resultObject);
+			}
+
+			// exclude list of page classes set in yml
+			if (isset($type['ExcludeClasses'])) {
+				foreach ($type['ExcludeClasses'] as $excludeClass) {
+					$orderedResults = $orderedResults->exclude('ClassName', $excludeClass);
+				}
 			}
 		}
 

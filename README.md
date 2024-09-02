@@ -78,6 +78,20 @@ defaults:
   sort: 'DatePublished DESC'
   ordering_column: 'DatePublished'
 ```
+### Exclusions
+Define list of classes to exclude from search results, include full namespace.
+```
+  types:
+    pages:
+    Label: 'Pages'
+    .....
+    ExcludeClasses: [
+      'NZResus\Pages\GuidelinesSection', 
+      'NZResus\Pages\GuidelinePage',
+      'NZResus\Pages\GuidelineItemPage',
+      'NZResus\Pages\GuidelineSearchPage',
+    ]
+```
 
 # Example configuration
 
