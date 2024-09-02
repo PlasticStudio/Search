@@ -71,6 +71,13 @@ sorts:
 ```
 priority: true
 ```
+### Defaults
+Set default sort or change the column used for ordering (useful if want to sort by a date field other than last edited)
+```
+defaults:
+  sort: 'DatePublished DESC'
+  ordering_column: 'DatePublished'
+```
 
 # Example configuration
 

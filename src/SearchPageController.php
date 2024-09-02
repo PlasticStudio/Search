@@ -183,6 +183,16 @@ class SearchPageController extends PageController {
 		}
 	}
 
+	public static function get_mapped_ordering_column() {
+        if ($defaults = self::get_defaults_available()) {
+            if (isset($defaults['ordering_column'])) {
+                return $defaults['ordering_column'];
+            }
+        } else {
+            return 'LastEdited';
+        }
+    }
+	
 	public static function get_sort(){
 		return self::$sort;
 	}
@@ -302,6 +312,7 @@ class SearchPageController extends PageController {
 		$types = self::get_mapped_types();
 		$filters = self::get_mapped_filters();
 		$priority = self::get_priority_enabled();
+		$ordering_column = self::get_mapped_ordering_column();
 		
 		// prepare combined result object
 		$allResults = array();
@@ -566,7 +577,7 @@ class SearchPageController extends PageController {
 					'priority' => isset($result['Priority']) ? $result['Priority'] : 1,
 					'class' => $type['ClassName'],
 					'type' => $type_order,
-					'lastEdited' => isset($result['LastEdited']) ? $result['LastEdited'] : 0,
+					'lastEdited' => isset($result[$ordering_column]) ? $result[$ordering_column] : 0,
 				];
 			}
 
