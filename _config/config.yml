@@ -10,6 +10,8 @@ SilverStripe\CMS\Model\SiteTree:
   extensions:
     - PlasticStudio\Search\SiteTreeSearchExtension
 # PlasticStudio\Search\SearchPageController:
+  # include_css: true
+  # include_js: true
   # types:
   #   docs:
   #     Label: 'Documents'

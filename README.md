@@ -25,6 +25,9 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 
 
 # Configuration
+
+* `include_css`: include search default stylings (`true`/`false`)
+* `include_js`: include search default scripts (`true`/`false`)
 * `types`: associative list of types to search
   * `Label`: front-end field label
   * `Table`: the object's primary table (note `_Live` suffix for versioned objects)
@@ -58,6 +61,8 @@ Before:
     - '#site'
 ---
 PlasticStudio\Search\SearchPageController:
+  include_css: true
+  include_js: true
   types:
     docs:
       Label: 'Documents'
