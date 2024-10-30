@@ -9,6 +9,7 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\View\Requirements;
 use SilverStripe\Control\Director;
+use SilverStripe\Subsites\State\SubsiteState;
 
 class SearchPageController extends PageController {
 	
@@ -273,8 +274,14 @@ class SearchPageController extends PageController {
 	 * @return PaginatedList
 	 **/
 	public function PerformSearch(){
-		
-		// get all our search requirements
+
+        // Add the current SubsiteID to the filters
+        $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+        if ($currentSubsiteID) {
+            self::$filters['subsite'] = $currentSubsiteID;
+        }
+
+        // get all our search requirements
 		$query = self::get_query($mysqlSafe = true);
 		$types = self::get_mapped_types();
 		$filters = self::get_mapped_filters();

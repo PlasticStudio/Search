@@ -109,6 +109,11 @@ PlasticStudio\Search\SearchPageController:
           pages: 
             Table: 'Page_Authors'
             Column: 'PageID'
+    subsite:
+      Structure: 'db'
+      Label: 'Subsite'
+      Column: 'SubsiteID'
+      Operator: '='
   sorts:
     title_asc:
       Label: 'Title (A-Z)'
