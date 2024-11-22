@@ -324,6 +324,10 @@ class SearchPageController extends PageController {
 			 **/		
 			if (isset($type['Filters'])){
 				foreach ($type['Filters'] as $key => $value){
+					if (is_array($value) === true) {
+						$where.= ' AND ('.$key.' IN ('.implode(',', $value).'))';
+						continue;
+					}
 					$where.= ' AND ('.$key.' = '.$value.')';
 				}
 			}
