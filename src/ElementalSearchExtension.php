@@ -22,7 +22,7 @@ class ElementalSearchExtension extends Extension
      * Force a re-index of the parent page on archive of element
      * @param Versioned $original
      */
-    public function onAfterDelete(&$original)
+    public function onAfterDelete()
     {
         $this->updateSearchContent();
     }
