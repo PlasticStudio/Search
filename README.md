@@ -14,6 +14,12 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 * Run `dev/build` to instansiate your new configuration (this will also automatically create an instance of `SearchPage` if one does not exist).
 * To overwrite the default `SearchPage` tmeplate, add a template file to your application: `templates/PlasticStudio/Search/Layout/SearchPage.ss`
 
+## Upgrading from jaedb/search
+
+Ensure you review the search config and update it to match the example config in this repo. Key changes:
+
+1. `Table: 'SiteTree_Live'` -> `Table: 'Page_Live'`
+2. Add `JoinTables: ['SiteTree_Live']`
 
 # Elemental
 
