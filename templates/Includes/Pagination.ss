@@ -1,8 +1,8 @@
 
-<% if MoreThanOnePage %>
+<% if $MoreThanOnePage %>
     <div class="pagination center">
     
-        <% if NotFirstPage %>
+        <% if $NotFirstPage %>
             <a class="prev button blue readmore" href="$PrevLink" title="View the previous page">Prev</a>
         <% else %>	
             <span class="prev disabled button">Prev</span>
@@ -11,7 +11,7 @@
             Page <input class="pagination-goto" value="$CurrentPage" data-skip-autofocus="true" data-page-length="$PageLength" data-total-pages="$TotalPages" /> of $TotalPages
         </span>
         
-        <% if NotLastPage %>
+        <% if $NotLastPage %>
             <a class="next button blue readmore" href="$NextLink" title="View the next page">Next</a>
         <% else %>	
             <span class="next disabled button">Next</span>
