@@ -161,10 +161,12 @@ class SearchPageController extends PageController {
 	
 	public static function get_query($mysqlSafe = false){
 		$query = self::$query;
-		if( $mysqlSafe ){
-			$query = str_replace("'", "\'", $query);
-			$query = str_replace('"', '\"', $query);
-			$query = str_replace('`', '\`', $query);
+		if ($query) {
+			if ($mysqlSafe) {
+				$query = str_replace("'", "\'", $query);
+				$query = str_replace('"', '\"', $query);
+				$query = str_replace('`', '\`', $query);
+			}
 		}
 		return $query;
 	}

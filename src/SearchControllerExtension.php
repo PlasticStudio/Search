@@ -13,6 +13,7 @@ use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\View\Requirements;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 
 class SearchControllerExtension extends DataExtension {
@@ -44,6 +45,8 @@ class SearchControllerExtension extends DataExtension {
 		if (Config::inst()->get('PlasticStudio\Search\SearchPageController', 'submit_button_text')) {
 			$submit_button_text = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'submit_button_text');
 		}
+		// don't do action here, set below for 404 error page fix
+		// fix breaks pagination, reinstating
         $actions = FieldList::create(
             FormAction::create("doSearchForm")->setTitle($submit_button_text)
         );
@@ -54,7 +57,11 @@ class SearchControllerExtension extends DataExtension {
 			$name = 'SearchForm', 
 			$fields = $fields,
 			$actions = $actions
-		)->addExtraClass('search-form');
+		)->addExtraClass('search-form')
+		->disableSecurityToken();
+
+		// $page = SearchPage::get()->first();
+		// $form->setFormAction($page->Link());
 		
         return $form;
 	}
@@ -155,7 +162,12 @@ class SearchControllerExtension extends DataExtension {
 							$source = $source->filter($filter['Filters']);
 						}
 
-						$fields->push(CheckboxSetField::create($key, $filter['Label'], $source->map('ID','Title','All'), explode(',',$value))->addExtraClass('chosen-select'));
+						if ($value == null) {
+                            $default = '';
+                        } else {
+                            $default = explode(',', $value);
+                        }
+						$fields->push(CheckboxSetField::create($key, $filter['Label'], $source->map('ID','Title','All'), $default)->addExtraClass('chosen-select'));
 
 						break;
 				}
@@ -191,7 +203,8 @@ class SearchControllerExtension extends DataExtension {
 			$name = 'AdvancedSearchForm', 
 			$fields = $fields,
 			$actions = $actions
-		)->addExtraClass('search-form advanced-search-form');
+		)->addExtraClass('search-form advanced-search-form')
+		->disableSecurityToken();
 		
         return $form;
 	}

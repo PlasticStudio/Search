@@ -1,11 +1,14 @@
 ---
-Name: search
+Name: ps-search
 Before:
     - '#site'
 ---
 SilverStripe\Control\Controller:
   extensions:
     - PlasticStudio\Search\SearchControllerExtension
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - PlasticStudio\Search\SiteTreeSearchExtension
 # PlasticStudio\Search\SearchPageController:
   # types:
   #   docs:

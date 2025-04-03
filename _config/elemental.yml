@@ -1,0 +1,9 @@
+---
+Name: 'ps-search-elemental'
+After: '#ps-search'
+Only:
+  moduleexists: 'dnadesign/silverstripe-elemental'
+---
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - PlasticStudio\Search\ElementalSearchExtension
