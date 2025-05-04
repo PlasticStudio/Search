@@ -78,8 +78,12 @@ class SearchControllerExtension extends DataExtension {
         $fields = FieldList::create();
 		
 		// search keywords
-		$fields->push( TextField::create('query','',SearchPageController::get_query())->addExtraClass('query')->setAttribute('placeholder', 'Keywords') );
-		
+		$placeholder_text = 'Keywords';
+		if (Config::inst()->get('PlasticStudio\Search\SearchPageController', 'search_form_placeholder_text')) {
+			$placeholder_text = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'search_form_placeholder_text');
+		}
+		$fields->push( TextField::create('query','',SearchPageController::get_query())->addExtraClass('query')->setAttribute('placeholder', $placeholder_text) );
+			
 		// classes to search		
 		if ($types_available = SearchPageController::get_types_available()){
 
