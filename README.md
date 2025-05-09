@@ -37,6 +37,7 @@ Ensure you review the search config and update it to match the example config in
   * `ClassName`: full ClassName
   * `ClassNameShort`: namespaced ClassName
   * `Filters`: a list of filters to apply pre-search (maps to `DataList->Filter(key => value)`)
+  * `JoinTables`: Join Tables. (format `JoinTable` or `JoinTable.Column` or `JoinTable.Column: JoinTableOn.Column` or `JoinTable: [JoinTableFrom.Column: JoinTableOn.Column]`. Look below for examples)
   * `Columns`: columns to search for query string matches (format `Table.Column`)
 * `filters`: associative list of filter options
   * `Structure`: defines the filter's relational structure (must be one of `db`, `has_one` or `many_many`)
@@ -58,7 +59,7 @@ TODO: `defaults`: Default attributes or settings, as opposed to those submitted 
 
 # Example configuration
 
-```
+```yml
 ---
 Name: search
 Before:
@@ -83,6 +84,18 @@ PlasticStudio\Search\SearchPageController:
       Filters: 
         SiteTree_Live.ShowInSearch: '1'
       JoinTables: ['SiteTree_Live']
+      # Another possible syntax (same result like above):
+      # JoinTables: ['SiteTree_Live.ID']
+
+      # Another possible syntax (same result like above):
+      # JoinTables:
+      #   - "SiteTree_Live.ID": "Page.ID"
+
+      # Another possible syntax (same result like above):
+      # JoinTables:
+      #   - "SiteTree_Live":
+      #     - "SiteTree_Live.ID": "Page.ID"
+      
       Columns: ['SiteTree_Live.Title','SiteTree_Live.MenuTitle','SiteTree_Live.Content', 'SiteTree_Live.ElementalSearchContent']
   filters:
     updated_before:

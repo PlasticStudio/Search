@@ -27,6 +27,15 @@ SilverStripe\CMS\Model\SiteTree:
   #     Filters: 
   #       SiteTree_Live.ShowInSearch: '1'
   #     JoinTables: ['SiteTree_Live']
+  #       # Same result as above
+  # #     JoinTables: ['SiteTree_Live.ID'] # Same result as above
+  #       # Same result as above
+  # #     JoinTables:
+  # #       - 'SiteTree_Live.ID': 'Page_Live.ID'
+  #       # Same result as above
+  # #     JoinTables:
+  # #       - 'SiteTree_Live':
+  # #           'SiteTree_Live.ID': 'Page_Live.ID'
   #     Columns: ['SiteTree_Live.Title','SiteTree_Live.MetaDescription','SiteTree_Live.MenuTitle','SiteTree_Live.Content']
   # filters:
   #   edited_before:
