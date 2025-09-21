@@ -55,6 +55,16 @@ Ensure you review the search config and update it to match the example config in
 
 TODO: `defaults`: Default attributes or settings, as opposed to those submitted through the search form.
 
+## Indexing Dataobjects
+
+The search checks canView permissions for Dataobjects before indexing, so you likely need to add:
+
+```php
+    public function canView($member = null)
+    {
+        return true;
+    }
+```
 
 # Example configuration
 
@@ -135,3 +145,4 @@ PlasticStudio\Search\SearchPageController:
   ## defaults:
     ## sort: 'Title ASC'
 ```
+
