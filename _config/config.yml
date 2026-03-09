@@ -9,6 +9,8 @@ SilverStripe\Control\Controller:
 SilverStripe\CMS\Model\SiteTree:
   extensions:
     - PlasticStudio\Search\SiteTreeSearchExtension
+PlasticStudio\Search\SiteTreeSearchExtension:
+  preload_elemental_areas: true
 # PlasticStudio\Search\SearchPageController:
   # types:
   #   docs:

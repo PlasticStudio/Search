@@ -10,6 +10,7 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\View\SSViewer;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\ORM\Queries\SQLUpdate;
+use DNADesign\Elemental\Extensions;
 
 class SiteTreeSearchExtension extends DataExtension
 {
@@ -20,6 +21,12 @@ class SiteTreeSearchExtension extends DataExtension
     private static $db = [
         'ElementalSearchContent' => 'Text',
     ];
+
+    /**
+     * preload cache for batch publishing
+     * @var null|array
+     */
+    private static ?array $elementalAreasCache = null;
 
     public function updateCMSFields(FieldList $fields)
     {
@@ -95,23 +102,110 @@ class SiteTreeSearchExtension extends DataExtension
         $content = '';
 
         try {
-            // Enable frontend themes in order to correctly render the elements as they would be for the frontend
             Config::nest();
             SSViewer::set_themes(SSViewer::config()->get('themes'));
 
-            // Get the elements content
-            $content .= $this->getOwner()->getElementsForSearch();
+            $page = $this->getOwner();
 
-            // Clean up the content
+            // Optional preload for bulk indexing
+            if (Config::inst()->get(self::class, 'preload_elemental_areas')) {
+                self::preloadElementalAreas();
+            }
+
+            if ($page->hasMethod('getElementsForSearch')) {
+                $content .= $page->getElementsForSearch();
+            } elseif ($page->hasExtension(ElementalPageExtension::class)) {
+                $content .= $this->getElementsForSearchFromElemental($page);
+            }
+
             $content = preg_replace('/\s+/', ' ', $content);
 
-            // Return themes back for the CMS
             Config::unnest();
         } finally {
-            // Restore themes
             SSViewer::set_themes($originalThemes);
         }
 
         return $content;
+    }
+
+
+
+    protected function getElementsForSearchFromElemental(SiteTree $page): string
+    {
+        $output = [];
+        $seen = [];
+
+        // Collect all areas for this page
+        $areas = [];
+        foreach ($page->hasOne() as $relation => $class) {
+            if (!is_a($class, ElementalArea::class, true)) {
+                continue;
+            }
+
+            $areaID = $page->{"{$relation}ID"};
+            if ($areaID && isset(self::$elementalAreasCache[$areaID])) {
+                $areas[$areaID] = self::$elementalAreasCache[$areaID];
+            } elseif ($page->$relation()->exists()) {
+                $areas[$areaID] = $page->$relation();
+            }
+        }
+
+        // Collect all element IDs and fetch them in one query
+        $elementIDs = [];
+        foreach ($areas as $area) {
+            foreach ($area->Elements()->column('ID') as $id) {
+                $elementIDs[$id] = $id;
+            }
+        }
+
+        if (!$elementIDs) {
+            return '';
+        }
+
+        $elements = BaseElement::get()->filter('ID', array_values($elementIDs));
+
+        foreach ($elements as $element) {
+            if (isset($seen[$element->ID])) {
+                continue;
+            }
+            $seen[$element->ID] = true;
+
+            if (!$element->getSearchIndexable()) {
+                continue;
+            }
+
+            $content = $element->getContentForSearchIndex();
+
+            if ($element->hasMethod('getCustomSearchContent')) {
+                $custom = $element->getCustomSearchContent();
+                if ($custom) {
+                    $content .= ' ' . $custom;
+                }
+            }
+
+            if ($content) {
+                $output[] = $content;
+            }
+        }
+
+        return implode(' ', $output);
+    }
+
+    /**
+     * Preload ElementalAreas for batch processing
+     */
+    protected static function preloadElementalAreas(): void
+    {
+        if (self::$elementalAreasCache === null) {
+            self::$elementalAreasCache = [];
+            foreach (ElementalArea::get()->eagerLoad('Elements') as $area) {
+                self::$elementalAreasCache[$area->ID] = $area;
+            }
+        }
+    }
+
+    protected static function resetElementalCache(): void
+    {
+        self::$elementalAreasCache = null;
     }
 }
