@@ -3,20 +3,16 @@
 namespace PlasticStudio\Search;
 
 use Exception;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\CheckboxSetField;
-use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\HiddenField;
-use SilverStripe\View\Requirements;
-use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 
-class SearchControllerExtension extends DataExtension {
+class SearchControllerExtension extends Extension {
 	
 	private static $allowed_actions = array(
 		'SearchForm',
