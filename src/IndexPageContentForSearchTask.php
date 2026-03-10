@@ -12,9 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class IndexPageContentForSearchTask extends BuildTask
 {
-    protected $title = 'Index Page Content for Search';
- 
-    protected $description = 'Collate all page content from elements and save to a field for search. Add optional query string, "reindex=true" to reindex all pages.';
+    protected string $title = 'Index Page Content for Search'; 
+    protected static string $description = 'Collate all page content from elements and save to a field for search. Add optional query string, "reindex=true" to reindex all pages.';
  
     public function execute(InputInterface $input, PolyOutput $output): int
     {
@@ -29,12 +28,12 @@ class IndexPageContentForSearchTask extends BuildTask
         $output->writeln('offset: ' . $offset);
         // echo 'count ' . $items->Count(). '<br />';
 
-        if(!$reindex) {
+        if (!$reindex) {
             $items = $items->filter(['ElementalSearchContent' => null]);
             $output->writeln('Running - generating first index...');
         }
 
-        if(!$items->count()) {
+        if (!$items->count()) {
             $output->writeln('No items to update.');
             return 0; // success
 
