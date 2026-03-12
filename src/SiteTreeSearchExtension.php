@@ -21,6 +21,7 @@ class SiteTreeSearchExtension extends Extension
 
     public function updateCMSFields(FieldList $fields)
     {
+        $fields->removeByName('ElementalSearchContent');
         // $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
     }
 
