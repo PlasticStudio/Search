@@ -15,7 +15,7 @@ use SilverStripe\Core\Config\Config;
 class SearchControllerExtension extends Extension {
 	
 	private static $allowed_actions = array(
-		'SearchForm',
+		'BasicSearchForm',
 		'AdvancedSearchForm'
 	);
 	
@@ -25,7 +25,7 @@ class SearchControllerExtension extends Extension {
 	 *
 	 * @return Form
 	 **/
-	public function SearchForm(){
+	public function BasicSearchForm(){
 		
 		// create our search form fields
         $fields = FieldList::create();
@@ -44,13 +44,13 @@ class SearchControllerExtension extends Extension {
 		// don't do action here, set below for 404 error page fix
 		// fix breaks pagination, reinstating
         $actions = FieldList::create(
-            FormAction::create("doSearchForm")->setTitle($submit_button_text)
+            FormAction::create("doBasicSearchForm")->setTitle($submit_button_text)
         );
 		
 		// now build the actual form object
         $form = Form::create(
 			$controller = $this->owner,
-			$name = 'SearchForm', 
+			$name = 'BasicSearchForm', 
 			$fields = $fields,
 			$actions = $actions
 		)->addExtraClass('search-form')
@@ -194,7 +194,7 @@ class SearchControllerExtension extends Extension {
 			$submit_button_text = Config::inst()->get('PlasticStudio\Search\SearchPageController', 'submit_button_text');
 		}
         $actions = FieldList::create(
-            FormAction::create("doSearchForm")->setTitle($submit_button_text)
+            FormAction::create("doBasicSearchForm")->setTitle($submit_button_text)
         );
 		
 		// now build the actual form object
@@ -214,10 +214,10 @@ class SearchControllerExtension extends Extension {
 	/**
 	 * Process the submitted search form. All we're really doing is redirecting to our structured URL
 	 * @param $data = array (post data)
-	 * @param $form = obj (the originating SearchForm object)
+	 * @param $form = obj (the originating BasicSearchForm object)
 	 * @return HTTPRedirect
 	 **/
-	public function doSearchForm($data, $form){
+	public function doBasicSearchForm($data, $form){
 
 		$page = SearchPage::get()->first();
 		if (!$page){
