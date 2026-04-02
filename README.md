@@ -4,7 +4,8 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 
 # Requirements
 
-* SilverStripe 6
+* Silverstripe 6
+* For Silverstripe 4/5 see 1.x 
 
 
 # Usage
