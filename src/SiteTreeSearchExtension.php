@@ -5,13 +5,11 @@ namespace PlasticStudio\Search;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\View\SSViewer;
-use SilverStripe\Versioned\Versioned;
 use SilverStripe\ORM\Queries\SQLUpdate;
 
-class SiteTreeSearchExtension extends DataExtension
+class SiteTreeSearchExtension extends Extension
 {
 
     /**
@@ -23,6 +21,7 @@ class SiteTreeSearchExtension extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
+        $fields->removeByName('ElementalSearchContent');
         // $fields->addFieldToTab('Root.test', TextField::create('ElementalSearchContent', 'ElementalSearchContent'));
     }
 

@@ -4,15 +4,15 @@
 
 	<% include SearchSummary %>
 
-	<% if Results %>
+	<% if $Results %>
 
 		<div class="search-results">
-		    <% loop Results %>
+		    <% loop $Results %>
 				<% include SearchResult %>
 		    <% end_loop %>
 		</div>
 
-	    <% with Results %>
+	    <% with $Results %>
 	        <% include Pagination %>
 	    <% end_with %>
 
