@@ -7,33 +7,36 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\Queries\SQLUpdate;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\InputInterface;
 
 class IndexPageContentForSearchTask extends BuildTask
 {
-    protected $title = 'Index Page Content for Search';
+    protected string $title = 'Index Page Content for Search'; 
+    protected static string $description = 'Collate all page content from elements and save to a field for search. Add optional query string, "reindex=true" to reindex all pages.';
  
-    protected $description = 'Collate all page content from elements and save to a field for search. Add optional query string, "reindex=true" to reindex all pages.';
- 
-    public function run($request)
+    public function execute(InputInterface $input, PolyOutput $output): int
     {
-        $reindex = $request->getVar('reindex');
-        $offset = $request->getVar('offset') ? $request->getVar('offset') : NULL;
-        $limit = $request->getVar('limit') ? $request->getVar('limit') : 10;
+        $reindex = $input->getArgument('reindex');
+        $offset = $input->getArgument('offset') ? $input->getArgument('offset') : NULL;
+        $limit = $input->getArgument('limit') ? $input->getArgument('limit') : 10;
 
         // select all sitetree items
         $items = SiteTree::get()->limit($limit, $offset);
-        echo 'Running...<br />';
-        echo 'limit: ' . $limit . '<br />';
-        echo 'offset: ' . $offset . '<br />';
+        $output->writeln('Running...');
+        $output->writeln('limit: ' . $limit);
+        $output->writeln('offset: ' . $offset);
         // echo 'count ' . $items->Count(). '<br />';
 
-        if(!$reindex) {
+        if (!$reindex) {
             $items = $items->filter(['ElementalSearchContent' => null]);
-            echo 'Running - generating first index...<br />';
+            $output->writeln('Running - generating first index...');
         }
 
-        if(!$items->count()) {
-            echo 'No items to update.<br />';
+        if (!$items->count()) {
+            $output->writeln('No items to update.');
+            return 0; // success
+
         } else {
 
             foreach ($items as $item) {
@@ -61,8 +64,10 @@ class IndexPageContentForSearchTask extends BuildTask
                     $update->execute();
                 }
 
-                echo '<p>Page ' . $item->Title . ' indexed.</p>' . PHP_EOL;
+                $output->writeln('Page ' . $item->Title . ' indexed.');
             }
+
+            return 0; // success
         }
     }
 

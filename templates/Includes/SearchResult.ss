@@ -7,14 +7,14 @@
 	    </h3>    
 
 	    <ul class="details">
-	        <% if File %>
+	        <% if $File %>
 	            <li class="type">
 	                $Extension
 	            </li>
 	            <li class="size">
 	                $Size
 	            </li>
-	    	<% else_if Parent %>
+	    	<% else_if $Parent %>
 	            <li class="parent">
 	                <a href="{$Parent.Link}">
 	                	$Parent.Title
@@ -28,9 +28,9 @@
 
 	    <div class="preview">
 	        <p>
-	        	<% if Description %>
+	        	<% if $Description %>
 	        		$Description
-	        	<% else_if Content %>
+	        	<% else_if $Content %>
 	        		$Content.LimitCharactersToClosestWord(40)
 	        	<% end_if %>
 	        </p>

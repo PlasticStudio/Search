@@ -4,7 +4,8 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 
 # Requirements
 
-* SilverStripe 4
+* Silverstripe 6
+* For Silverstripe 4/5 see 1.x 
 
 
 # Usage
@@ -13,6 +14,9 @@ The built-in SilverStripe search form is a very simple search engine. This plugi
 * Configure your website's `_config/config.yml` (or add `_config/search.yml`) to define search parameters.
 * Run `dev/build` to instansiate your new configuration (this will also automatically create an instance of `SearchPage` if one does not exist).
 * To overwrite the default `SearchPage` tmeplate, add a template file to your application: `templates/PlasticStudio/Search/Layout/SearchPage.ss`
+
+## Upgrading from SS5 to SS6
+Rename $SearchForm to $BasicSearchForm in page templates
 
 ## Upgrading from jaedb/search
 
@@ -50,6 +54,7 @@ Ensure you review the search config and update it to match the example config in
  * `sorts`: associative list of sort options. These are used to popoulate a "Sort by" dropdown field in the Advanced Search Form. Sort order of search results will default to the top item in this list.
    * `Label`: front-end field label
    * `Sort`: SQL sort string
+* `search_form_placeholder_text`: Change search input field placeholder text (defaults to "Keywords")
 * `submit_button_text`: Text to use on search form submit button (defaults to "Search")
 
 TODO: `defaults`: Default attributes or settings, as opposed to those submitted through the search form.
@@ -97,6 +102,15 @@ Define list of classes to exclude from search results, include full namespace.
       'NZResus\Pages\GuidelineItemPage',
       'NZResus\Pages\GuidelineSearchPage',
     ]
+## Indexing Dataobjects
+
+The search checks canView permissions for Dataobjects before indexing, so you likely need to add:
+
+```php
+    public function canView($member = null)
+    {
+        return true;
+    }
 ```
 
 # Example configuration
@@ -172,9 +186,11 @@ PlasticStudio\Search\SearchPageController:
     published_asc:
       Label: 'Publish date (oldest first)'
       Sort: 'DatePublished ASC'
+  search_form_placeholder_text: 'Keywords'
   submit_button_text: 'Go'
   priority: false
   ## TODO:
   ## defaults:
     ## sort: 'Title ASC'
 ```
+
