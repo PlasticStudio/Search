@@ -161,12 +161,17 @@ class SearchPageController extends PageController {
 	
 	public static function get_query($mysqlSafe = false){
 		$query = self::$query;
-		if ($query) {
-			if ($mysqlSafe) {
-				$query = str_replace("'", "\'", $query);
-				$query = str_replace('"', '\"', $query);
-				$query = str_replace('`', '\`', $query);
-			}
+		// if ($query) {
+		// 	if ($mysqlSafe) {
+		// 		$query = str_replace(['\\', '/'], '', $query);  // Remove forward slashes
+		// 		$query = str_replace("'", "\'", $query);
+		// 		$query = str_replace('"', '\"', $query);
+		// 		$query = str_replace('`', '\`', $query);
+		// 	}
+		// }
+		if ($query && $mysqlSafe) {
+			// Escape special characters so the search term can be safely embedded in a SQL query
+			$query = DB::get_conn()->escapeString($query);
 		}
 		return $query;
 	}
@@ -349,7 +354,7 @@ class SearchPageController extends PageController {
 				$sql.= "CASE ";
 				foreach ($type['Columns'] as $i => $column){
 					$column = explode('.',$column);
-					$sql.= "WHEN $column[0].$column[1] LIKE '%".$query."%'" . " THEN $priority ";
+					$sql .= "WHEN {$column[0]}.{$column[1]} LIKE '%{$query}%' THEN {$priority} ";
 					$priority++;
 				}
 				$sql.= "ELSE $priority END AS Priority ";
